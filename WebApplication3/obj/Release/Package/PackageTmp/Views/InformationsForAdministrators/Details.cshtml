@@ -1,0 +1,73 @@
+﻿@model WebApplication3.Models.InformationsForAdministrator
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>InformationsForAdministrator</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemsPerPage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemsPerPage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SilverPack)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SilverPack)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GoldPack)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GoldPack)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PlatinumPack)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PlatinumPack)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValueToken)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValueToken)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Time)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Time)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Currency)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Currency)
+        </dd>
+</dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

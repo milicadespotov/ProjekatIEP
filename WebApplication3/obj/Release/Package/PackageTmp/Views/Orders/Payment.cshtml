@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Payment";
+}
+
+<div class="container body-content">
+    <br /><br />
+    <h3>Continue with payment.</h3>
+    <div>
+        <br />
+        <a id="c-mobile-payment-widget" href="http://stage.centili.com/payment/widget?apikey=774d5009542ba5cd44b2a838bd144acc&country=rs&reference=@ViewBag.IdOrder"><img src="https://www.centili.com/images/centili-widget-button.png" /></a>
+    </div>
+    <br /><br />
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript" src="http://stage.centili.com/widget/js/c-mobile-payment-scripts.js"></script>
+}

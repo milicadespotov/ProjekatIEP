@@ -1,0 +1,61 @@
+﻿@model PagedList.IPagedList<WebApplication3.Models.Auction>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "GetAllReady";
+}
+
+<h2> Ready Auctions </h2>
+@{ 
+    if (Model.Count == 0)
+    {
+        <h3 style = "color: lightcoral"> There is no auctions ready!  </h3>
+    }
+}
+<h4> Click for allow openning </h4>
+<hr /> 
+<div class="row">
+    @foreach (var item in Model)
+    {
+        if (item.Image != null)
+        {
+            string imreBase64Data = Convert.ToBase64String(item.Image);
+            string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+
+        @Html.DisplayFor(modelItem => item);
+        }
+
+    }
+
+
+</div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("GetAllReady",
+                                    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+
+    
+
+@{ 
+    /*
+    @section scripts
+    {
+        <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+        <scrpit>
+            $(function() 
+            {
+            var hub = $.connection.refreshHub;
+
+            hub.client.refresh = function()
+            {
+            location.reload();
+            }
+
+            $.connection.hub.start();
+            });
+        </scrpit>
+    }*/
+} 

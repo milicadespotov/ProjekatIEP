@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "Purchase";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container body-content">
+    <br />
+    <h2>Purchase tokens.</h2>
+
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <h4>To proceed with order choose one of existing packages.</h4>
+        <div class="form-horizontal">
+            <hr />
+            
+            <table class="table table-dark table-borderless" style="width: 80%" align="center">
+
+                <tr>
+                    <td><img src="~/Content/images/silver.png" /></td>
+                    <td> <img src="~/Content/images/gold.png" /></td>
+                    <td><img src="~/Content/images/platinum.png" /></td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <label class="radio-inline">
+                            <input type="radio" name="package" id="package" value="silver">
+                            <br />
+                            @ViewBag.Silver tokens
+                            
+                            <br />
+                            @ViewBag.SilverValue @ViewBag.Currency
+                        </label>
+                    </td>
+                    <td align="center">
+                        <label class="radio-inline">
+
+                            <input type="radio" name="package" id="package" value="gold">
+                            <br />
+                            @ViewBag.Gold tokens
+                            <br />
+                            @ViewBag.GoldValue @ViewBag.Currency
+                         
+                        </label>
+                    </td>
+                    <td align="center">
+                        <label class="radio-inline">
+                            <input type="radio" name="package" id="package" value="platinum">
+                            <br />
+                            @ViewBag.Platinum tokens
+                            <br />
+                            @ViewBag.PlatinumValue @ViewBag.Currency
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>
+                        @Html.ValidationMessage("packages", new { @class = "text-danger" })
+                    </td>
+                </tr>
+
+
+                <tr class="form-group">
+                    <td colspan= "3" align= "left">
+                        <input type="submit" value="Purchase" class="btn btn-dark" />        
+                        </td>
+                </tr>
+                <tr>
+                    
+                     
+                </tr>
+
+            </table>
+        </div>
+    }
+    <br />
+
+</div>
+<br />
+<br />

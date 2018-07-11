@@ -1,0 +1,41 @@
+﻿@model WebApplication3.Models.User
+
+@{
+    ViewBag.Title = "ViewForUser";
+}
+
+<h2></h2>
+
+&nbsp; &nbsp; <h4> @Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName) </h4>
+
+<hr />
+@if (User.IsInRole("Admin"))
+{
+    <h5> Administrator </h5>
+}
+@if (User.IsInRole("User"))
+{
+    <h3> Registered User </h3>
+}
+
+    <table class="table ">
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.Email)</td>
+            <td> @Html.DisplayFor(model => model.Email) </td>
+        </tr>
+        
+       
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.NumberOfTokens) </td>
+            <td> @Html.DisplayFor(model => model.NumberOfTokens) </td>
+
+        </tr>
+        <tr>
+            <td>
+                <a style="margin-right: 1px" href="@Url.Action("Edit", "Manage")" class="btn btn-dark"> Edit information</a>
+                <a href="@Url.Action("ChangePassword", "Manage")" class="btn btn-data"> Change password </a>
+                <a href="@Url.Action("", "Orders")" class="btn btn-danger"> My orders </a>
+            </td>
+        </tr>
+
+    </table>

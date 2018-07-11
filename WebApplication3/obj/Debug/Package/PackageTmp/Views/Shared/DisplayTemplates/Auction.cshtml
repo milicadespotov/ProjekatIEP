@@ -1,0 +1,122 @@
+﻿    @model WebApplication3.Models.Auction
+@{
+    ViewBag.Title = "Auction";
+}
+@using Microsoft.AspNet.Identity;
+@{
+    string imreBase64Data = Convert.ToBase64String(Model.Image);
+    string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+}
+@if (Model.State == "OPENED" || Model.State == "COMPLETED" || Model.IdOwner == User.Identity.GetUserId() || User.IsInRole("Admin"))
+{
+<div class="col-md-3">
+
+   
+        <div class="card" style="width: 100%; height: 550px;">
+            <center> <img src="@imgDataURL" class="card-img-top" style="width:80%; min-height: 200px !important; max-height: 200px;" alt="Image is currently unavailable" /> </center>
+            <div class="card-body">
+                <center>
+                    @if (Model.State == "OPENED")
+                    {
+                        <div class="idOfAuction" id="@Model.IdAuction"></div>
+                    }
+                    <h4 class="card-title"> @Html.ActionLink(Model.Name, "Details", new { id = Model.IdAuction }) </h4>
+                    @if (Model.State == "OPENED")
+                    {
+                        <p class="card-text isOpen" id="@Model.IdAuction opened" style="background-color: green; margin-bottom: 1px; "> @Html.DisplayFor(modelItem => Model.State) </p>
+                    }
+                    @if (Model.State == "COMPLETED")
+                    {
+                        <p class="card-text" id="@Model.IdAuction opened" style="background-color:red; margin-bottom: 1px; "> @Html.DisplayFor(modelItem => Model.State)</p>
+                    }
+                    @if (Model.State == "READY")
+                    {
+
+                        <p class="card-text" id="@Model.IdAuction opened" style="background-color:darkviolet; margin-bottom: 1px; "> @Html.DisplayFor(modelItem => Model.State)</p>
+                    }
+                    @if (Model.State == "OPENED")
+                    {
+                        TimeSpan showTime = ((Convert.ToDateTime(Model.TimeClosing)).Subtract(DateTime.Now));
+
+                        int seconds = (int)showTime.TotalSeconds;
+
+                        int minutes = (int)seconds / 60;
+                        seconds = (int)seconds % 60;
+
+
+                        <p class="timer duration" id= "@Model.IdAuction timer">@minutes:@seconds</p>
+                    }
+
+
+                    <p id="@Model.IdAuction CurrentPrice" class="duration" style="font-weight: 500"> @Model.CurrentPrice TOKENS </p>
+
+
+
+
+                    @{
+                        if (Model.IdWinner != null && Model.State == "COMPLETED")
+                        {
+                            <p id="@Model.IdAuction LastBidder"> Winner is @Model.Winner.Email</p>
+                        }
+                        else if (Model.IdWinner != null && Model.State == "OPENED")
+                        {
+                            <p id="@Model.IdAuction LastBidder"> Last bid @Model.Winner.Email </p>
+                        }
+                        else if (Model.IdWinner == null && Model.State == "COMPLETED")
+                        {
+                            <p id="@Model.IdAuction LastBidder"> Auction finished without winner </p>
+                        }
+                        else if (Model.IdWinner == null && Model.State == "OPENED")
+                        {
+                            <p id="@Model.IdAuction LastBidder"> Not yet bidded </p>
+                        }
+
+                    }
+
+
+                    @{
+
+                        if (User.IsInRole("Admin") && Model.State == "READY")
+                        {
+                            <div class="" id= "@Model.IdAuction Button">
+                                <a href="@Url.Action("Open", "Auctions", new { id = Model.IdAuction })" class="btn btn-dark"> OPEN </a>
+                            </div>
+                        }
+                        else if (Model.State == "OPENED" && User.Identity.IsAuthenticated)
+                        {
+                            <div class="buttonBid" id="@Model.IdAuction Button">
+                                <a href="@Url.Action("Bid", "Auctions", new { id = Model.IdAuction, version = @Convert.ToBase64String(Model.AuctionRowVersion) })" class="btn btn-dark"> BID NOW</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="" id= "@Model.IdAuction Button">
+                                &nbsp;
+                            </div>
+                        }
+                    }
+                    <br />
+                    @if (Request.IsAuthenticated)
+                    {
+                        if (User.Identity.GetUserId() == Model.IdOwner || User.IsInRole("Admin"))
+                        {
+                            @Html.ActionLink("Delete", "Delete", new
+                       {
+                           id = Model.IdAuction
+                       });
+                        }
+                    }
+
+
+                </center>
+            </div>
+        </div>
+    
+        
+    
+</div>
+                        }
+<script>
+
+
+</script>

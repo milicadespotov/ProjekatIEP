@@ -1,0 +1,57 @@
+﻿@model PagedList.IPagedList<WebApplication3.Models.Order>
+@using PagedList.Mvc
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Number of tokens
+        </th>
+        <th>
+            Real price
+        </th>
+        <th>
+            Current state
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberOfTokens)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RealPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentState)
+            </td>
+            <td>
+                @Html.ActionLink("COMPLETE", "CentiliPayment", new { clientId = item.IdOrder, status = "ok" }) |
+                @Html.ActionLink("CANCEL", "CentiliPayment", new { clientId = item.IdOrder, status = "cancel" }) |
+                @Html.ActionLink("NOT PERMIT", "CentiliPayment", new { clientId = item.IdOrder, status = "failed" })
+            </td>
+        </tr>
+    }
+</table>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("ManageOrders",
+                                new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+
+
+
+

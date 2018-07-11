@@ -1,0 +1,379 @@
+﻿@model WebApplication3.Models.Auction
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+
+<div class="row">
+    <div class="col-md-5">
+        <h4>
+            @Html.DisplayFor(model => model.Name)
+        </h4>
+        @{
+
+            if (User.IsInRole("Admin") && Model.State == "READY")
+            {
+                <div class="@Model.IdAuction Button">
+                    <a href="@Url.Action("Open", "Auctions", new { id = Model.IdAuction })" class="btn btn-dark"> OPEN </a>
+                </div>
+            }
+            else if (Model.State == "OPENED" && User.Identity.IsAuthenticated)
+            {
+                <div class="buttonBid" id="@Model.IdAuction Button">
+                    <a href="@Url.Action("Bid", "Auctions", new { id = Model.IdAuction, version = @Convert.ToBase64String(Model.AuctionRowVersion) })" class="btn btn-dark"> BID NOW</a>
+                </div>
+            }
+            else
+            {
+                <div class="buttonBid">
+                    &nbsp;
+                </div>
+            }
+        }
+        <hr />
+
+        @{
+
+            string imreBase64Data = Convert.ToBase64String(Model.Image);
+            string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+        }
+
+
+
+        <img src="@imgDataURL" style="width: 200px; height: auto" />
+
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Duration)
+            </dt>
+
+            <dd>
+                @if (Model.State == "OPENED")
+                {
+                    TimeSpan showTime = ((Convert.ToDateTime(Model.TimeClosing)).Subtract(DateTime.Now));
+
+                    int seconds = (int)showTime.TotalSeconds;
+
+                    int minutes = (int)seconds / 60;
+                    seconds = (int)seconds % 60;
+
+
+                    <p class="timer duration">@minutes:@seconds</p>
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.StartingPrice)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StartingPrice)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CurrentPrice)
+            </dt>
+
+            <dd id="@Model.IdAuction CurrentPrice">
+                @Html.DisplayFor(model => model.CurrentPrice)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Created)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Created)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TimeOpening)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TimeOpening)
+            </dd>
+
+            <dt>
+                Last bidder
+            </dt>
+            <dd>
+                @{
+                    if (Model.IdWinner != null && Model.State == "COMPLETED")
+                    {
+                        <p id="@Model.IdAuction LastBidder"> Winner is @Model.Winner.Email</p>
+                    }
+                    else if (Model.IdWinner != null && Model.State == "OPENED")
+                    {
+                        <p id="@Model.IdAuction LastBidder"> Last bid @Model.Winner.Email </p>
+                    }
+                    else if (Model.IdWinner == null && Model.State == "COMPLETED")
+                    {
+                        <p id="@Model.IdAuction LastBidder"> Auction finished without winner </p>
+                    }
+                    else if (Model.IdWinner == null && Model.State == "OPENED")
+                    {
+                        <p id="@Model.IdAuction LastBidder"> Not yet bidded </p>
+                    }
+
+                }
+
+
+            </dd>
+
+
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TimeClosing)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TimeClosing)
+            </dd>
+
+
+            <dt>
+                @Html.DisplayNameFor(model => model.State)
+            </dt>
+            
+            <dd style="width: 100px">
+                @if (Model.State == "OPENED")
+                {
+                    <div class="idOfAuction" id="@Model.IdAuction"></div>
+                }
+
+                @if (Model.State == "OPENED")
+                {
+                    <p class="card-text isOpen" id="@Model.IdAuction opened" style="color: green; margin-bottom: 1px; "> @Html.DisplayFor(modelItem => Model.State) </p>
+                }
+                @if (Model.State == "COMPLETED")
+                {
+                    <p class="card-text" id="@Model.IdAuction opened" style="color:red; margin-bottom: 1px; "> @Html.DisplayFor(modelItem => Model.State)</p>
+                }
+                @if (Model.State == "READY")
+                {
+
+                    <p class="card-text" id="@Model.IdAuction opened" style="color:darkviolet; margin-bottom: 1px; "> @Html.DisplayFor(modelItem => Model.State)</p>
+                }
+            </dd>
+
+
+        </dl>
+
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.IdAuction }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
+
+    <div class="col-md-7">
+        
+        
+        
+        <div id="bid">
+            @{
+                int number = Model.Bid.Count;
+                if (Model.Bid.Count == 0)
+                {
+                    if (Model.State == "COMPLETED")
+                    {
+                        <h3> This auction complete without bidder!   </h3>
+                    }
+                    else if (Model.State == "OPENED")
+                    {
+                        <h3> Be first bidder! </h3>
+                    }
+                    else if (Model.State == "READY")
+                    {
+                        <h3> Wait for auction opening! </h3>
+                    }
+                }
+                else
+                {
+                    <h3> All bids </h3>
+                }
+                foreach (var bidder in Model.Bid)
+                {
+
+                    <p> @bidder.User.Email </p>
+
+                }
+            }
+        </div>
+
+        <div id="auctionThis">
+
+            @{  if (Model.State == "COMPLETED" && Model.Winner != null)
+                {
+                    <h4> WINNER IS </h4>
+                        <p style="font-weight: 300;"> @Model.Winner.Email</p>
+                }
+            }
+
+
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts
+{
+    <script src="~/Scripts/jquery.signalR-2.3.0.min.js"> </script>
+    <script src="~/signalr/hubs"></script>
+
+    <script>
+        $(function () {
+            var hub = $.connection.refreshHub;
+
+            hub.client.refresh = function (AuctionId, AuctionPrice, LastBidder, Version) {
+                var lastBidderField = document.getElementById(AuctionId + " " + "LastBidder");
+                lastBidderField.innerHTML = "Last Bid " + LastBidder;
+                var thisPriceField = document.getElementById(AuctionId + " " + "CurrentPrice");
+                thisPriceField.innerHTML = AuctionPrice + " TOKENS";
+
+                var elemBid = document.getElementById("bid");
+                var newElement = document.createElement('p');
+
+                newElement.innerHTML = "" + LastBidder;
+                elemBid.appendChild(newElement);
+
+                var content = '@Url.Action("Bid", "Auctions", new { id = "-1", version = "-2"})';
+                content = content.replace("-1", AuctionId);
+                content = content.replace("-2", Version);
+                element.innerHTML = '<a href="' + content + '" class="btn btn-dark">BID NOW</a>';
+
+            }
+
+            hub.client.open = function () {
+                var elem = document.getElementById("notif");
+                elem.classList.add("d-block");
+
+            }
+
+            hub.client.finish = function (Winner, idAuction)
+            {
+
+              
+                var elem = document.getElementsByClassName("idOfAuction");
+                elem = elem[0];
+                var id = elem.getAttribute("id");
+                
+                if (id == idAuction) {
+                    var elem = document.getElementById("auctionThis");
+                    elem.innerHTML = "<h4> WINNER IS </h4> <p>" + " " + Winner + "</p>";
+                }
+                
+            }
+
+            hub.client.token = function (UserNameBidder, UserName, Tokens, NumberOfTokens) {
+                var elem = document.getElementsByClassName("userName");
+                var userNameCurrent = elem[0].getAttribute("id");
+                var element = document.getElementById("numberOfTokens");
+                var tokens;
+                if (UserNameBidder !== null) {
+                    if (UserNameBidder === userNameCurrent) // to je user koji je na stranici
+                    {
+                        if (UserNameBidder !== UserName) // on nije isti kao prethodi
+                        {
+
+                         //   alert(element.innerHTML);
+                            element.innerHTML = "" + Tokens;
+                        }
+                    }
+                }
+                if (UserNameCurrent === UserName) {
+                    element.innerHTML = "" + NumberOfTokens;
+                }
+            }
+
+
+            hub.client.tokenorder = function (UserName, Tokens) {
+                var elem = document.getElementsByClassName("userName");
+                var userNameCurrent = elem[0].getAttribute("id");
+                var element = document.getElementById("numberOfTokens");
+                var tokens;
+                if (UserName === userNameCurrent) {
+                    element.innerHTML = "" + Tokens;
+                }
+            }
+
+
+            hub.client.delete = function (AuctionId)
+            {
+
+                var elem = document.getElementById(AuctionId + " " + "Button");
+
+                if (elem !== null) {
+
+                    elem.innerHTML = "";
+                }
+
+                var elemState = document.getElementById(AuctionId + " " + "opened");
+                elemState.style.backgroundColor = "red";
+                elemState.innerHTML = "AUCTION IS NOT AVAILABLE";
+            }
+            $.connection.hub.start();
+        });
+
+        window.onload = function () {
+
+
+            function timer() {
+                var arrayOfElements = document.getElementsByClassName("timer");
+                var arrayOfOpen = document.getElementsByClassName("isOpen");
+                var arrayButton = document.getElementsByClassName("buttonBid");
+                var arrayId = document.getElementsByClassName("idOfAuction");
+                var i = 0;
+                for (i = 0; i < arrayOfElements.length; i++) {
+                    value = arrayOfElements[i].innerHTML;
+                    //console.log(i + " " + value)
+                    var time = value.split(":");
+                    var minutes = parseInt(time[0]);
+                    var seconds = parseInt(time[1]);
+                    var time = minutes * 60 + seconds - 1;
+
+                    if (time == 0 || time == -1) {
+
+                        var valueOfButton = arrayButton[i];
+                        arrayButton[i].innerHTML = "";
+                        minutes = 0;
+                        seconds = 0;
+                        arrayOfElements[i].innerHTML = minutes + ":" + seconds;
+
+                        arrayOfOpen[i].style.color = "red";
+                        arrayOfOpen[i].innerHTML = "COMPLETED";
+                        var id = arrayId[i].getAttribute("id");
+
+                        $.ajax({
+                            type: "POST",
+                            url: "@Url.Action("LoadAuction", "Auctions", new { id = Model.IdAuction})",
+                            //  data: "{'id': '" + id + "'}",
+                            dataType: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function () { }
+                        });
+                    }
+                    else {
+                        minutes = parseInt(time / 60);
+                        seconds = time % 60;
+
+
+                        arrayOfElements[i].innerHTML = minutes + ":" + seconds;
+                    }
+                }
+
+
+                setTimeout(timer, 1000);
+            }
+
+            setTimeout(timer, 1000);
+
+        }
+    </script>
+
+}

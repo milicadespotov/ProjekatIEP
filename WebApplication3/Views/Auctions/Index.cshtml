@@ -1,0 +1,288 @@
+﻿@using Microsoft.AspNet.Identity;
+@model WebApplication3.Models.FormAuctionViewModel
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@if (!Request.IsAuthenticated)
+{
+    <div class="jumbotron" style="padding: 1px 50px">
+        <hr />
+        <p class="lead"> You don't have account? If you want to participate in auctions, please make one! WELCOME!  </p>
+        <div class= "btn btn-outline-success"> @Html.ActionLink("Log in", "Login", "Account") &raquo; </div>
+        <hr />
+    </div>
+}
+
+
+<h3> Search the auctons </h3>
+<br /> <br />
+<h4> Criteria of searching </h4>
+<hr />
+@{ 
+    if (Model.Auctions.Count == 0)
+    {
+        <h3> There is not auction yet!  </h3>
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <table cellpadding="7" cellspacing="0">
+        <tr>
+
+            <td> @Html.DisplayNameFor(w => w.Name) </td>
+            <td> @Html.DisplayNameFor(w => w.LowPrice) </td>
+            <td> @Html.DisplayNameFor(w => w.HighPrice) </td>
+            <td> @Html.DisplayNameFor(w => w.List)</td>
+            @if (Request.IsAuthenticated)
+            {
+                <td> @Html.DisplayNameFor(w => w.Only) </td>
+            }
+        </tr>
+        <tr>
+            <td> @Html.TextBoxFor(w => w.Name, new { @class = "form-control" })</td>
+
+            <td>
+                @Html.EditorFor(w => w.LowPrice, new { @class = "form-control" })
+
+
+            </td>
+
+            <td>
+                @Html.EditorFor(w => w.HighPrice, new { @class = "form-control" })
+
+            </td>
+
+
+
+            @{
+                List<SelectListItem> roleList = new List<SelectListItem>();
+
+                roleList.Add(new SelectListItem
+                {
+                    Text = "",
+                    Value = "",
+                });
+                roleList.Add(new SelectListItem
+                {
+                    Text = "READY",
+                    Value = "READY",
+                });
+                roleList.Add(new SelectListItem
+                {
+                    Text = "OPENED",
+                    Value = "OPENED",
+                });
+                roleList.Add(new SelectListItem
+                {
+                    Text = "COMPLETED",
+                    Value = "COMPLETED",
+                });
+            }
+            <td>
+                @Html.DropDownListFor(w => w.List, new SelectList(roleList, "Text", "Value"), new { @class = "form-control" })
+
+            </td>
+            @if (Request.IsAuthenticated)
+            {
+                <td> @Html.CheckBoxFor(w => w.Only, new { @checked = "checked" }) </td>
+            }
+            <td> <input type="submit" value="Search" class="btn btn-default" /> </td>
+
+        </tr>
+
+    </table>
+    @Html.ValidationMessageFor(model => model.LowPrice, "", new { @class = "text-danger" })
+                <br />
+                    @Html.ValidationMessageFor(model => model.HighPrice, "", new { @class = "text-danger" })
+
+                }
+<hr />
+<br /> <br />
+@if (this.User.Identity.IsAuthenticated)
+{
+    <p class= "btn btn-dark linkOver">
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+
+<div class="row">
+
+    @foreach (var item in Model.Auctions)
+    {
+        {
+            if (item.Image != null)
+            {
+                string imreBase64Data = Convert.ToBase64String(item.Image);
+                string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+
+                @Html.DisplayFor(modelItem => item)
+            }
+        }
+    
+
+    }
+
+
+</div>
+
+   
+@if (Model.Auctions.PageSize == 0)
+{
+    <h2> There is no auctions right now! </h2>
+}
+Page @(Model.Auctions.PageCount < Model.Auctions.PageNumber ? 0 : Model.Auctions.PageNumber) of @Model.Auctions.PageCount
+
+@Html.PagedListPager(Model.Auctions, page => Url.Action("Index",
+                                    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+     
+
+@section Scripts
+{
+    <script src="~/Scripts/jquery.signalR-2.3.0.min.js"> </script>
+    <script src="~/signalr/hubs"></script>
+
+    <script>
+        $(function () {
+            var hub = $.connection.refreshHub;
+
+            hub.client.refresh = function (AuctionId, AuctionPrice, LastBidder, Version) {
+                var lastBidderField = document.getElementById(AuctionId + " " + "LastBidder");
+                lastBidderField.innerHTML = "Last Bid " + LastBidder;
+                var thisPriceField = document.getElementById(AuctionId + " " + "CurrentPrice");
+                thisPriceField.innerHTML = AuctionPrice + " TOKENS";
+                var element = document.getElementById(AuctionId + " Button");
+                var content = '@Url.Action("Bid", "Auctions", new { id = "-1", version = "-2"})';
+                content = content.replace("-1", AuctionId);
+                content = content.replace("-2", Version);
+                element.innerHTML = '<a href="' + content + '" class="btn btn-dark">BID NOW</a>';
+                
+            }
+
+            hub.client.token = function (UserNameBidder, UserName, Tokens, NumberOfTokens) {
+                var elem = document.getElementsByClassName("userName");
+                var userNameCurrent = elem[0].getAttribute("id");
+                var element = document.getElementById("numberOfTokens");
+                var tokens;
+                if (UserNameBidder !== null) {
+                    if (UserNameBidder === userNameCurrent) // to je user koji je na stranici
+                    {
+                        if (UserNameBidder !== UserName) // on nije isti kao prethodi
+                        {
+
+                          //  alert(element.innerHTML);
+                            element.innerHTML = "" + Tokens;
+                        }
+                    }
+                }
+                if (UserNameCurrent === UserName) {
+                    element.innerHTML = "" + NumberOfTokens;
+                }
+            }
+
+            hub.client.tokenorder = function(UserName, Tokens)
+            {
+                
+                var elem = document.getElementsByClassName("userName");
+                
+                var userNameCurrent = elem[0].getAttribute("id");
+                var element = document.getElementById("numberOfTokens");
+                var tokens;
+                if (UserName === userNameCurrent)
+                {
+                    element.innerHTML = "" + Tokens;
+                }
+            }
+
+            hub.client.open = function () {
+                var elem = document.getElementById("notif");
+                elem.classList.add("d-block");
+
+            }
+
+            hub.client.delete = function (AuctionId) {
+
+                var elem = document.getElementById(AuctionId + " " + "Button");
+
+                if (elem !== null) {
+
+                    elem.innerHTML = "";
+                }
+                
+                var elemState = document.getElementById(AuctionId + " " + "opened");
+                elemState.style.backgroundColor = "red";
+                elemState.innerHTML = "AUCTION IS NOT AVAILABLE";
+                var elem = document.getElementById(AuctionId + " " + "timer");
+                elem.innerHTML = "0:0";
+            }
+            $.connection.hub.start();
+        });
+
+        window.onload = function () {
+
+
+            function timer() {
+                var arrayOfElements = document.getElementsByClassName("timer");
+                var arrayOfOpen = document.getElementsByClassName("isOpen");
+                var arrayButton = document.getElementsByClassName("buttonBid");
+                var arrayId = document.getElementsByClassName("idOfAuction");
+                var i = 0;
+                for (i = 0; i < arrayOfElements.length; i++)    {
+                    value = arrayOfElements[i].innerHTML;
+                    //console.log(i + " " + value)
+                    var time = value.split(":");
+                    var minutes = parseInt(time[0]);
+                    var seconds = parseInt(time[1]);
+                    var time = minutes * 60 + seconds - 1;
+
+                    if (time == 0 || time == -1) {
+                        var valueOfButton = arrayButton[i];
+
+
+                        arrayButton[i].innerHTML = "";
+                        minutes = 0;
+                        seconds = 0;
+                        arrayOfElements[i].innerHTML = minutes + ":" + seconds;
+
+                        arrayOfOpen[i].style.backgroundColor = "red";
+                        arrayOfOpen[i].innerHTML = "COMPLETED";
+                        var id = arrayId[i].getAttribute("id");
+                        if (time == 0) { // CHECK IF THIS IS OKAY
+                            $.ajax({
+                                type: "POST",
+                                url: "Auctions/LoadAuction",
+                                data: "{'id': '" + id + "'}",
+                                dataType: "json",
+                                contentType: "application/json; charset=utf-8",
+                                success: function () { }
+                            });
+                        }
+                    }
+                    else {
+                        minutes = parseInt(time / 60);
+                        seconds = time % 60;
+
+
+                        arrayOfElements[i].innerHTML = minutes + ":" + seconds;
+                    }
+                }
+
+
+                setTimeout(timer, 1000);
+            }
+
+            setTimeout(timer, 1000);
+
+        }
+    </script>
+
+}

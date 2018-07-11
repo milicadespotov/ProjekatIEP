@@ -1,0 +1,67 @@
+﻿@model IEnumerable<WebApplication3.Models.InformationsForAdministrator>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Basic parameters of all auctions</h2>
+<hr style= "color: crimson" />
+<br /> <br /> <br />
+<table class="table" style = "border-color: lightcoral">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ItemsPerPage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SilverPack)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GoldPack)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PlatinumPack)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ValueToken)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Currency)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ItemsPerPage)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SilverPack)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GoldPack)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PlatinumPack)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ValueToken)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Time)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Currency)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) 
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) 
+            
+        </td>
+    </tr>
+}
+
+</table>

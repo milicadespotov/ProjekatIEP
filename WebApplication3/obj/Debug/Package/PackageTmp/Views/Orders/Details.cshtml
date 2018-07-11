@@ -1,0 +1,50 @@
+﻿@model WebApplication3.Models.Order
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Order</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.User.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumberOfTokens)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumberOfTokens)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RealPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RealPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentState)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentState)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    
+    @Html.ActionLink("Back to List", "Index")
+</p>

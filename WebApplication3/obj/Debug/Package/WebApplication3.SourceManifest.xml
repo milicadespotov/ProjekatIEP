@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sitemanifest>
+  <IisApp path="C:\Users\Milica Despotovic\source\repos\WebApplication3\WebApplication3\obj\Debug\Package\PackageTmp" />
+  <setAcl path="C:\Users\Milica Despotovic\source\repos\WebApplication3\WebApplication3\obj\Debug\Package\PackageTmp" setAclResourceType="Directory" />
+  <setAcl path="C:\Users\Milica Despotovic\source\repos\WebApplication3\WebApplication3\obj\Debug\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
+</sitemanifest>

@@ -1,0 +1,72 @@
+﻿@model WebApplication3.Models.InformationsForAdministrator
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>InformationsForAdministrator</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemsPerPage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemsPerPage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SilverPack)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SilverPack)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GoldPack)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GoldPack)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PlatinumPack)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PlatinumPack)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValueToken)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValueToken)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Time)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Time)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
